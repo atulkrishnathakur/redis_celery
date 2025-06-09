@@ -1,0 +1,12 @@
+__pycache__
+alembic/__pycache__
+alembic/version/__pycache__
+database/__pycache__
+database/model/__pycache__
+database/model_functions/__pycache__
+pydantic_schema/__pycache__
+validation/__pycache__
+exception/__pycache__
+env
+logs/*.log
+.env
