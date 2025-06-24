@@ -11,11 +11,15 @@ from core.auth import authenticate
 from core.token import create_access_token
 from config.loadenv import envconst
 from config.message import auth_message
+from config.message import logout_message
 from validation.email import EmailSchema
 from fastapi_mail import FastMail, MessageSchema, ConnectionConfig,MessageType
 from config.fastapi_mail_config import send_email, mailconf
 from config.redis_session import redisSessionObj
 from core.auth import getCurrentActiveEmp
+from core.httpbearer import get_api_token
+from core.httpbearer import http_bearer
+from config.constants import constants
 
 router = APIRouter()
 
@@ -69,8 +73,8 @@ async def login(
             "data":datalist
         }
         response_data = AuthOut(**response_dict) 
-        response = JSONResponse(content=response_data.dict(),status_code=http_status_code)
-        loglogger.debug("RESPONSE:"+str(response_data.dict()))
+        response = JSONResponse(content=response_data.model_dump(),status_code=http_status_code)
+        loglogger.debug("RESPONSE:"+str(response_data.model_dump()))
 
         body = """<h1>Your have successfully Test</h1> """
         subject = "Your have successfully login"
@@ -92,10 +96,10 @@ async def login(
         return response
     
 @router.post("/logout", response_model=Logout)
-async def logout(token: Annotated[str, Depends(header_scheme)]):
+async def logout(token: Annotated[str, Depends(http_bearer)]):
     http_status_code: int = status.HTTP_200_OK
     status_ok:bool = constants.STATUS_OK
-    data={"status_code":http_status_code,"status":status_ok,"message":message.LOGOT_SUCCESS}
+    data={"status_code":http_status_code,"status":status_ok,"message":logout_message.LOGOT_SUCCESS}
     response_data = Logout(**data)
-    response = JSONResponse(content=response_data.dict(),status_code=http_status_code)
+    response = JSONResponse(content=response_data.model_dump(),status_code=http_status_code)
     return response

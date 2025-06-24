@@ -51,3 +51,9 @@ class AuthMessage:
     LOGIN_REQUIRED: str = "You have need to login first"
 
 auth_message = AuthMessage()
+
+
+class LogoutMessage:
+    LOGOT_SUCCESS: str = "Logout Successfull"
+
+logout_message = LogoutMessage()
