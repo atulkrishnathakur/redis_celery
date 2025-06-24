@@ -14,6 +14,8 @@ from config.message import auth_message
 from validation.email import EmailSchema
 from fastapi_mail import FastMail, MessageSchema, ConnectionConfig,MessageType
 from config.fastapi_mail_config import send_email, mailconf
+from config.redis_session import redisSessionObj
+from core.auth import getCurrentActiveEmp
 
 router = APIRouter()
 
@@ -49,6 +51,15 @@ async def login(
         datadict['status'] = authemp.status
         datadict['mobile'] = authemp.mobile
         datalist.append(datadict)
+
+        loginuserdict = {}
+        loginuserdict['id'] = authemp.id
+        loginuserdict['emp_name'] = authemp.emp_name
+        loginuserdict['email'] = authemp.email
+        loginuserdict['status'] = authemp.status
+
+        redisSessionObj.set_session(authemp.id, loginuserdict)
+
         response_dict = {
             "status_code": http_status_code,
             "status":True,
@@ -79,3 +90,12 @@ async def login(
         response = JSONResponse(content=data,status_code=http_status_code)
         loglogger.debug("RESPONSE:"+str(data))
         return response
+    
+@router.post("/logout", response_model=Logout)
+async def logout(token: Annotated[str, Depends(header_scheme)]):
+    http_status_code: int = status.HTTP_200_OK
+    status_ok:bool = constants.STATUS_OK
+    data={"status_code":http_status_code,"status":status_ok,"message":message.LOGOT_SUCCESS}
+    response_data = Logout(**data)
+    response = JSONResponse(content=response_data.dict(),status_code=http_status_code)
+    return response

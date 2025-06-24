@@ -17,8 +17,8 @@ class AuthCheckerMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
         token = request.headers.get("Authorization")
         excluded_paths = [
-            "/softbook-docs",
-            "/api/softbook.json",
+            "/redis_celery-docs",
+            "/api/redis_celery.json",
             "/api"+api_router.url_path_for("login"),
             "/api"+api_router.url_path_for("apitest"),
             "/api/uploads/.*",

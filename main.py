@@ -15,13 +15,13 @@ def include_router(app):
 def start_application():
     app = FastAPI(
         DEBUG=True,
-        title="softbook",
+        title="redis_celery",
         summary="This is a fastapi project",
         description="This is fastapi project with sqlalchemy",
         version="1.0.0",
-        openapi_url="/softbook.json",
-        docs_url="/softbook-docs",
-        redoc_url="/softbook-redoc",
+        openapi_url="/redis_celery.json",
+        docs_url="/redis_celery-docs",
+        redoc_url="/redis_celery-redoc",
         root_path="/api",
         root_path_in_servers=True,
         )
