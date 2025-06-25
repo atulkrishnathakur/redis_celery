@@ -20,6 +20,8 @@ from core.auth import getCurrentActiveEmp
 from core.httpbearer import get_api_token
 from core.httpbearer import http_bearer
 from config.constants import constants
+from database.model_functions.login import get_emp_for_login
+from validation.emp_m import EmpSchemaOut
 
 router = APIRouter()
 
@@ -62,7 +64,7 @@ async def login(
         loginuserdict['email'] = authemp.email
         loginuserdict['status'] = authemp.status
 
-        redisSessionObj.set_session(authemp.id, loginuserdict)
+        redisSessionObj.set_session(f"{authemp.id}:loginuser", loginuserdict)
 
         response_dict = {
             "status_code": http_status_code,
@@ -96,7 +98,9 @@ async def login(
         return response
     
 @router.post("/logout", response_model=Logout)
-async def logout(token: Annotated[str, Depends(http_bearer)]):
+async def logout(current_user: Annotated[EmpSchemaOut, Depends(getCurrentActiveEmp)], db:Session = Depends(get_db)):
+    loginuserid = current_user.id
+    redisSessionObj.delete_all_session(loginuserid)
     http_status_code: int = status.HTTP_200_OK
     status_ok:bool = constants.STATUS_OK
     data={"status_code":http_status_code,"status":status_ok,"message":logout_message.LOGOT_SUCCESS}

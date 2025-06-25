@@ -16,6 +16,12 @@ class RedisSession:
     def delete_session(self, session_key: str):
         data = self.redis_client.delete(session_key)
         return True
+    
+    def delete_all_session(self, prefix_pattern: str):
+        pattern = f"{prefix_pattern}:*"
+        for key in self.redis_client.scan_iter(match=pattern):
+            self.redis_client.delete(key)
+        return True
 
 redisSessionObj = RedisSession()
 
