@@ -6,6 +6,12 @@ from router.router_base import api_router
 from exception.custom_exception import CustomException
 from config.message import auth_message
 import re
+from core.auth import getCurrentEmp,getCurrentActiveEmp
+from database.session import get_db
+import jwt
+from config.loadenv import envconst
+from validation.auth import TokenData
+
 
 # https://fastapi.tiangolo.com/tutorial/middleware/
 
@@ -24,11 +30,12 @@ class AuthCheckerMiddleware(BaseHTTPMiddleware):
             "/api/uploads/.*",
             "/api/pdf/.*"
             ]
-
+        
         if any(re.match(path, request.url.path) for path in excluded_paths):
             return await call_next(request)
 
-        if request.url.path not in excluded_paths and (token is None or not token.startswith("Bearer ")) :
+        # Validate token
+        if not token or not token.startswith("Bearer "):
             return JSONResponse(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 content={
@@ -38,5 +45,17 @@ class AuthCheckerMiddleware(BaseHTTPMiddleware):
                     "data":[]
                     },
             )
-        response = await call_next(request)
-        return response
+        token_value = token.split(" ")[1]  # Get the part after "Bearer"
+        if not token_value:
+            return JSONResponse(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                content={
+                    "status_code":status.HTTP_401_UNAUTHORIZED,
+                    "status":False,
+                    "message":auth_message.LOGIN_REQUIRED,
+                    "data":[]
+                    },
+            )
+
+        payload = jwt.decode(token_value, envconst.SECRET_KEY, algorithms=[envconst.ALGORITHM])
+        return await call_next(request)

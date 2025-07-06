@@ -13,6 +13,7 @@ from validation.emp_m import EmpSchemaOut
 from validation.auth import TokenData
 from config.loadenv import envconst
 from core.httpbearer import get_api_token
+from config.redis_session import redisSessionObj
 
 def authenticate(email,password,db):
     dbempm = get_emp_for_login(db,email)
@@ -34,19 +35,20 @@ def authenticate(email,password,db):
     return dbempm
 
 async def getCurrentEmp(token: Annotated[str, Depends(get_api_token)], db: Annotated[Session, Depends(get_db)]):
-    if token in blacklist:
+    payload = jwt.decode(token, envconst.SECRET_KEY, algorithms=[envconst.ALGORITHM])
+    email: str = payload.get("email")
+    token_data = TokenData(email=email)
+    currentEmp = get_emp_for_login(db, email=token_data.email)
+    loginuserid = currentEmp.id
+    redisuserdata = redisSessionObj.get_session(loginuserid,"loginuser")
+    if redisuserdata is None:
         raise CustomException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             status=False,
             message=auth_message.LOGIN_REQUIRED,
             data=[]
         )
-    else:
-        payload = jwt.decode(token, envconst.SECRET_KEY, algorithms=[envconst.ALGORITHM])
-        email: str = payload.get("email")
-        token_data = TokenData(email=email)
-        currentEmp = get_emp_for_login(db, email=token_data.email)
-        return currentEmp
+    return currentEmp
 
 async def getCurrentActiveEmp(
     currentEmp: Annotated[EmpSchemaOut, Depends(getCurrentEmp)],

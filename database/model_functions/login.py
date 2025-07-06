@@ -27,3 +27,20 @@ def get_emp_for_login(db,email):
         response = JSONResponse(content=data,status_code=http_status_code)
         loglogger.debug("RESPONSE:"+str(data))
         return response
+
+def get_emp_by_email(db,email):
+    try:
+        stmt = select(Empm).where(Empm.email == email).where(Empm.status == 1)
+        result = db.execute(stmt)
+        data = result.scalars().first()
+        return data
+    except Exception as e:
+        http_status_code = status.HTTP_422_UNPROCESSABLE_ENTITY
+        data = {
+            "status_code": http_status_code,
+            "status":False,
+            "message":str(e)
+        }
+        response = JSONResponse(content=data,status_code=http_status_code)
+        loglogger.debug("RESPONSE:"+str(data))
+        return response

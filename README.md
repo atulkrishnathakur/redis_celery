@@ -1,4 +1,5 @@
 ## This project we have created using fastapi framwork
+1. In this application we are create login,logout using redis session
 
 ## update your system
 
@@ -50,6 +51,12 @@ atul@atul-Lenovo-G570:~/redis_celery$ source env/bin/activate
 ```
 (env) atul@atul-Lenovo-G570:~/redis_celery$ redis-cli keys '*'
 
+```
+
+# How to see all redis keys with a prefix
+1. Here `8:` is a prefix
+```
+atul@atul-Lenovo-G570:~/redis_celery$ redis-cli keys '8:*'
 ```
 
 ## Shows the all keys and its expiration status
