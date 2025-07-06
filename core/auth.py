@@ -41,6 +41,7 @@ async def getCurrentEmp(token: Annotated[str, Depends(get_api_token)], db: Annot
     currentEmp = get_emp_for_login(db, email=token_data.email)
     loginuserid = currentEmp.id
     redisuserdata = redisSessionObj.get_session(loginuserid,"loginuser")
+
     if redisuserdata is None:
         raise CustomException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -48,6 +49,7 @@ async def getCurrentEmp(token: Annotated[str, Depends(get_api_token)], db: Annot
             message=auth_message.LOGIN_REQUIRED,
             data=[]
         )
+    
     return currentEmp
 
 async def getCurrentActiveEmp(

@@ -22,6 +22,7 @@ from core.httpbearer import http_bearer
 from config.constants import constants
 from database.model_functions.login import get_emp_for_login
 from validation.emp_m import EmpSchemaOut
+from exception.custom_exception import CustomException
 
 router = APIRouter()
 
@@ -101,6 +102,13 @@ async def login(
 async def logout(current_user: Annotated[EmpSchemaOut, Depends(getCurrentActiveEmp)], db:Session = Depends(get_db)):
     try:
         loginuserid = current_user.id
+        if loginuserid is None:
+            raise CustomException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                status=False,
+                message=auth_message.LOGIN_REQUIRED,
+                data=[]
+            )
         redisSessionObj.delete_all_session(loginuserid)
         http_status_code: int = status.HTTP_200_OK
         status_ok:bool = constants.STATUS_OK

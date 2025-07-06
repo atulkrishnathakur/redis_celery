@@ -52,8 +52,8 @@ def empSave(empm: EmpSchemaIn, db:Session = Depends(get_db)):
             "data":datalist
         }
         response_data = EmpSchemaOut(**response_dict) 
-        response = JSONResponse(content=response_data.dict(),status_code=http_status_code)
-        loglogger.debug("RESPONSE:"+str(response_data.dict()))
+        response = JSONResponse(content=response_data.model_dump(),status_code=http_status_code)
+        loglogger.debug("RESPONSE:"+str(response_data.model_dump()))
         return response
     except Exception as e:
         http_status_code = status.HTTP_422_UNPROCESSABLE_ENTITY
@@ -106,8 +106,8 @@ def empUploadProfile(
             "data":datalist
         }
         response_data = EmpSchemaOut(**response_dict) 
-        response = JSONResponse(content=response_data.dict(),status_code=http_status_code)
-        loglogger.debug("RESPONSE:"+str(response_data.dict()))
+        response = JSONResponse(content=response_data.model_dump(),status_code=http_status_code)
+        loglogger.debug("RESPONSE:"+str(response_data.model_dump()))
         return response
     except Exception as e:
         http_status_code = status.HTTP_422_UNPROCESSABLE_ENTITY
@@ -169,8 +169,8 @@ def generateEmpRegistrationDetails(
             "data":datalist
         }
         response_data = EmpSchemaOut(**response_dict) 
-        response = JSONResponse(content=response_data.dict(),status_code=http_status_code)
-        loglogger.debug("RESPONSE:"+str(response_data.dict()))
+        response = JSONResponse(content=response_data.model_dump(),status_code=http_status_code)
+        loglogger.debug("RESPONSE:"+str(response_data.model_dump()))
 
         body = """<h1>Check the attachement for profile details</h1> """
         subject = "Profile details"
@@ -188,7 +188,6 @@ def generateEmpRegistrationDetails(
             bccemail=bccemail,
             attachmentsList=attachmentsList
             )
-
         return response
         
     except Exception as e:
@@ -197,8 +196,7 @@ def generateEmpRegistrationDetails(
             "status_code": http_status_code,
             "status":False,
             "message":"Type:"+str(type(e))+", Message:"+str(e)
-        }
-        
+        }        
         response = JSONResponse(content=data,status_code=http_status_code)
         loglogger.debug("RESPONSE:"+str(data))
         return response
