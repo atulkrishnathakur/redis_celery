@@ -99,3 +99,26 @@ self.redis_client.set(
 4. nx=True: Only set if the key does not exist.
 5. xx=True: Only set if the key already exists.
 6. You should only use one of nx=True or xx=True at a time—using both will cancel each other out.
+
+
+## Celery documentation
+1. https://docs.celeryq.dev/en/stable/getting-started/first-steps-with-celery.html#first-steps
+
+## how to install celery
+1. command `pip install celery`
+```
+(env) atul@atul-Lenovo-G570:~/redis_celery$ pip install celery
+```
+## install the redis library
+1. The redis package is the Python client for interacting with a Redis server.
+```
+(env) atul@atul-Lenovo-G570:~/redis_celery$ pip install redis
+```
+
+## Run the celery worker sever
+1. command: `celery -A tasks worker --loglevel=INFO`
+```
+(env) atul@atul-Lenovo-G570:~/redis_celery$ celery -A config.celery_app.celeryapp worker --loglevel=info
+
+```
+## For the deployment docker is best because celery,redis,uvicorn server always should be run

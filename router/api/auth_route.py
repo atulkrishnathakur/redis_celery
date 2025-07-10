@@ -23,6 +23,8 @@ from config.constants import constants
 from database.model_functions.login import get_emp_for_login
 from validation.emp_m import EmpSchemaOut
 from exception.custom_exception import CustomException
+from config.celery_app import celeryapp
+from celery_tasks.email import send_email_task
 
 router = APIRouter()
 
@@ -79,13 +81,14 @@ async def login(
         response = JSONResponse(content=response_data.model_dump(),status_code=http_status_code)
         loglogger.debug("RESPONSE:"+str(response_data.model_dump()))
 
-        body = """<h1>Your have successfully Test</h1> """
+        body = """<h1>Your have successfully test celery 1 123</h1> """
         subject = "Your have successfully login"
         toemail = [authemp.email]
-        ccemail = ['atulcc@yopmail.com']
+        ccemail = ['atulccc@yopmail.com']
         bccemail = ['atulbcc@yopmail.com']
         emailBody = body
-        send_email(background_tasks=background_tasks,emaiSubject=subject,emailTo=toemail,emailBody=emailBody,ccemail=ccemail,bccemail=bccemail)
+        #send_email(background_tasks=background_tasks,emaiSubject=subject,emailTo=toemail,emailBody=emailBody,ccemail=ccemail,bccemail=bccemail)
+        send_email_task.delay(emaiSubject=subject,emailTo=toemail,emailBody=emailBody,ccemail=ccemail,bccemail=bccemail)
         return response
     except Exception as e:
         http_status_code = status.HTTP_422_UNPROCESSABLE_ENTITY
