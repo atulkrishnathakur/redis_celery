@@ -121,4 +121,20 @@ self.redis_client.set(
 (env) atul@atul-Lenovo-G570:~/redis_celery$ celery -A config.celery_app.celeryapp worker --loglevel=info
 
 ```
+
+## Celery crontab 
+1. https://docs.celeryq.dev/en/latest/userguide/periodic-tasks.html
+2. Run the command for celery worker
+
+```
+(env) atul@atul-Lenovo-G570:~/redis_celery$ celery -A config.celery_app.celeryapp worker --loglevel=info
+
+```
+3. start the celery beat service
+
+```
+(env) atul@atul-Lenovo-G570:~/redis_celery$ celery -A config.celery_app.celeryapp beat --loglevel=info
+
+```
+
 ## For the deployment docker is best because celery,redis,uvicorn server always should be run
